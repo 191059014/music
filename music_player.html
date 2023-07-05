@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MyMusic</title>
+</head>
+<style>
+body {
+    text-align: center;
+}
+
+div {
+    width: 100%
+}
+
+#showlist {
+    display: block;
+}
+
+#hidelist {
+    display: none
+}
+
+#listDiv {
+    background-color: yellow
+}
+</style>
+
+<body>
+    <div>
+        <div>
+            <div>正在播放...<span></span></div>
+            <audio id="musicplayer" crossOrigin="anonymous" controls></audio>
+            <div>
+                <button onclick="randomPlay()">随机播放</button>
+            </div>
+        </div>
+        <div>
+        </div>
+        <div id="listDiv">
+            <a href="javascript:void(0)" onclick="showlist(this,true)">显示列表</a>
+            <a href="javascript:void(0)" onclick="showlist(this,false)">隐藏列表</a>
+        </div>
+        <div id="musiclist">
+            <div id="singerDiv"></div>
+        </div>
+    </div>
+    <script>
+    let urlPrefix = "https://github.com/191059014/music/blob/master/mp3/song"
+    let songConfig = {
+        "周杰伦": [
+            { name: "", url: "" }
+        ],
+        "其他": [
+            { name: "何小清 - 原谅我一次 (Live片段)", url: "/其他/何小清%20-%20原谅我一次%20(Live片段).mp3" },
+            { name: "何小清 - 原谅我一次 (Live片段)", url: "/其他/何小清%20-%20好想再爱你%20(片段).mp3" }
+        ]
+    }
+
+    let musics = []
+
+    let musiclistObj = document.getElementById("musiclist");
+
+    function showlist(self, show) {
+        if (show) {
+            musiclistObj.style.display = 'block';
+        } else {
+            musiclistObj.style.display = 'none';
+        }
+    }
+
+    function filterBySinger(singer) {
+        // body... 
+    }
+
+    // 随机播放
+    function randomPlay() {
+        debugger;
+        let size = musics.length;
+        let index = Math.floor(Math.random() * size);
+        while (index > size) {
+            index = Math.floor(Math.random() * size);
+        }
+        console.log(index)
+        let player = document.getElementById("musicplayer");
+        player.crossOrigin = 'anonymous';
+        player.src = urlPrefix+musics[index]['url'];
+        // player.src = "D:\\Program Files\\KuGou\\北念情书 - 周笔畅《笔记》.mp3"
+        player.play();
+    }
+
+
+
+    // 初始化歌手列表
+    let singerDiv = document.getElementById("singerDiv");
+    for (let singer in songConfig) {
+        let singerLink = document.createElement('a');
+        singerLink.href = "javascript:void(0)";
+        singerLink.innerText = singer;
+        singerLink.style.marginRight = '10px';
+        // singerLink.onclick = 
+        singerDiv.appendChild(singerLink);
+        musics.push(...songConfig[singer]);
+    }
+    </script>
+</body>
+
+</html>
