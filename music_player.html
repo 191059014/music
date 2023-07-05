@@ -31,7 +31,7 @@ div {
     <div>
         <div>
             <div>正在播放...<span></span></div>
-            <audio id="musicplayer" crossOrigin="anonymous" controls></audio>
+            <audio id="musicplayer" controls></audio>
             <div>
                 <button onclick="randomPlay()">随机播放</button>
             </div>
@@ -47,14 +47,14 @@ div {
         </div>
     </div>
     <script>
-    let urlPrefix = "https://github.com/191059014/music/blob/master/mp3/song"
+    let urlPrefix = "D:\\Program Files\\KuGou\\"
     let songConfig = {
         "周杰伦": [
             { name: "", url: "" }
         ],
         "其他": [
-            { name: "何小清 - 原谅我一次 (Live片段)", url: "/其他/何小清%20-%20原谅我一次%20(Live片段).mp3" },
-            { name: "何小清 - 原谅我一次 (Live片段)", url: "/其他/何小清%20-%20好想再爱你%20(片段).mp3" }
+            { name: "何小清 - 原谅我一次 (Live片段)", url: "北念情书 - 周笔畅《笔记》.mp3" },
+            { name: "何小清 - 原谅我一次 (Live片段)", url: "北念情书 - 周笔畅《笔记》.mp3" }
         ]
     }
 
@@ -84,9 +84,8 @@ div {
         }
         console.log(index)
         let player = document.getElementById("musicplayer");
-        player.crossOrigin = 'anonymous';
-        player.src = urlPrefix+musics[index]['url'];
-        // player.src = "D:\\Program Files\\KuGou\\北念情书 - 周笔畅《笔记》.mp3"
+<!--        player.src = urlPrefix+musics[index]['url'];-->
+        player.src = "https://github.com/191059014/music/blob/main/song/其他/何小清 - 原谅我一次 (Live片段).mp3"
         player.play();
     }
 
