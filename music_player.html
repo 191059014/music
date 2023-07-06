@@ -6,101 +6,179 @@
     <title>MyMusic</title>
 </head>
 <style>
-body {
-    text-align: center;
+.topDiv,
+.bottomDiv {
+    width: 100%;
+    background-color: grey;
+    border-radius: 5px;
 }
 
-div {
-    width: 100%
+.topDiv {
+    height: 100px;
 }
 
-#showlist {
-    display: block;
+.topDiv>div {
+    float: left;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-#hidelist {
-    display: none
+.audioDiv {
+    width: 20%;
 }
 
-#listDiv {
-    background-color: yellow
+.btnDiv {
+    width: 20%;
+}
+
+.btnDiv button {
+    margin-right: 10px;
+}
+
+.msgDiv {
+    width: 60%;
+}
+
+marquee {
+    margin-right: 100px;
+    font-size: 2rem;
+    font-style: italic;
+    text-shadow: 2px 3px 1px pink;
+}
+
+.centerDiv {
+    width: 100%;
+    height: 50px;
+    margin-top: 10px;
+    background-color: grey;
+    border-radius: 5px;
+}
+
+.bottomDiv ol {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+li:hover {
+    cursor: pointer;
+    color: yellow;
+}
+
+#musiclist {
+    column-count: 3;
+    display: none;
+}
+
+.activeMusic {
+    color: yellow;
+}
+
+.inactiveMusic {
+    color: none;
 }
 </style>
 
 <body>
-    <div>
-        <div>
-            <div>正在播放...<span></span></div>
-            <audio id="musicplayer" controls></audio>
-            <div>
-                <button onclick="randomPlay()">随机播放</button>
-            </div>
+    <div class="topDiv">
+        <div class="audioDiv">
+            <audio id="musicplayer" controls controlsList="noplaybackrate"></audio>
         </div>
-        <div>
+        <div class="btnDiv">
+            <button onclick="randomPlay()">下一首</button>
+            <button onclick="randomPlay()">随机播放</button>
+            <button onclick="openMusicList(this)">展示歌曲列表</button>
         </div>
-        <div id="listDiv">
-            <a href="javascript:void(0)" onclick="showlist(this,true)">显示列表</a>
-            <a href="javascript:void(0)" onclick="showlist(this,false)">隐藏列表</a>
-        </div>
-        <div id="musiclist">
-            <div id="singerDiv"></div>
+        <div class="msgDiv">
+            <marquee direction="left">当前歌曲：<span id="currentMusicName"></span></marquee>
         </div>
     </div>
+    <div class="bottomDiv">
+        <ol id="musiclist"></ol>
+    </div>
     <script>
+    // 歌曲的位置根路径
     let urlPrefix = "D:\\Program Files\\KuGou\\"
-    let songConfig = {
-        "周杰伦": [
-            { name: "", url: "" }
-        ],
-        "其他": [
-            { name: "何小清 - 原谅我一次 (Live片段)", url: "北念情书 - 周笔畅《笔记》.mp3" },
-            { name: "何小清 - 原谅我一次 (Live片段)", url: "北念情书 - 周笔畅《笔记》.mp3" }
-        ]
+
+    // 歌曲的名字和url
+    let songs = [{ 'name': 'kaaa i - 迟来的情话', 'url': 'kaaa i - 迟来的情话.mp3' }, { 'name': 'Kelly Clarkson - Stronger (DJ版)', 'url': 'Kelly Clarkson - Stronger (DJ版).mp3' }, { 'name': 'Tank - 三国恋 (DJ版)', 'url': 'Tank - 三国恋 (DJ版).mp3' }, { 'name': '一栗莎子 - 我想要天上的月亮和地上的霜 (BGM)', 'url': '一栗莎子 - 我想要天上的月亮和地上的霜 (BGM).mp3' }, { 'name': '何小清 - 原谅我一次 (Live片段)', 'url': '何小清 - 原谅我一次 (Live片段).mp3' }, { 'name': '何小清 - 好想再爱你 (片段)', 'url': '何小清 - 好想再爱你 (片段).mp3' }, { 'name': '偶然遇见 - 真的爱着你', 'url': '偶然遇见 - 真的爱着你.mp3' }, { 'name': '冯心怡 - 其实都没有 (DJ北笙版)', 'url': '冯心怡 - 其实都没有 (DJ北笙版).mp3' }, { 'name': '北念情书 - 周笔畅《笔记》(1)', 'url': '北念情书 - 周笔畅《笔记》(1).mp3' }, { 'name': '北念情书 - 周笔畅《笔记》', 'url': '北念情书 - 周笔畅《笔记》.mp3' }, { 'name': '孙俪、李健 - 风吹麦浪 (Live)', 'url': '孙俪、李健 - 风吹麦浪 (Live).mp3' }, { 'name': '王梓钰 - 九张机', 'url': '王梓钰 - 九张机.mp3' }, { 'name': '皮卡丘多多 - 我和你 (DJ苏启辰版)', 'url': '皮卡丘多多 - 我和你 (DJ苏启辰版).mp3' }, { 'name': '芽丫 - 我来人间一趟 (cover# 魏佳艺)', 'url': '芽丫 - 我来人间一趟 (cover# 魏佳艺).mp3' }, { 'name': '萧敬腾、沐泽 - 怎么说我不爱你 (DJ沐泽版)', 'url': '萧敬腾、沐泽 - 怎么说我不爱你 (DJ沐泽版).mp3' }, { 'name': '许巍 - 曾经的你 (3D环绕版)', 'url': '许巍 - 曾经的你 (3D环绕版).mp3' }, { 'name': '邓寓君(等什么君) - 赤伶 (DJ名龙版)', 'url': '邓寓君(等什么君) - 赤伶 (DJ名龙版).mp3' }, { 'name': '邓寓君(等什么君) - 辞九门回忆 (DJ王雨笙版)', 'url': '邓寓君(等什么君) - 辞九门回忆 (DJ王雨笙版).mp3' }, { 'name': '野兔 - 一半疯了一半算了', 'url': '野兔 - 一半疯了一半算了.mp3' }, { 'name': '陈瑞祁 - 火花 (DJ版)', 'url': '陈瑞祁 - 火花 (DJ版).mp3' }, { 'name': '魏佳艺 - 我着了你的道 (DJ何鹏版)', 'url': '魏佳艺 - 我着了你的道 (DJ何鹏版).mp3' }]
+
+    // 生成歌曲列表
+    for (let index in songs) {
+        song = songs[index];
+        olElement = document.getElementById("musiclist");
+        liElement = document.createElement("li");
+        liElement.addEventListener("click", function() {
+            play(index);
+        });
+        liElement.innerText = song["name"];
+        liElement.id = "music_" + index;
+        olElement.appendChild(liElement);
     }
 
-    let musics = []
+    // 歌曲列表，默认隐藏
+    let showMusicList = false;
 
-    let musiclistObj = document.getElementById("musiclist");
-
-    function showlist(self, show) {
-        if (show) {
-            musiclistObj.style.display = 'block';
-        } else {
+    // 展开/隐藏歌曲列表
+    function openMusicList(self) {
+        let musiclistObj = document.getElementById("musiclist");
+        if (showMusicList) {
             musiclistObj.style.display = 'none';
+            showMusicList = false;
+            self.innerText = "展示歌曲列表";
+        } else {
+            musiclistObj.style.display = 'block';
+            showMusicList = true;
+            self.innerText = "隐藏歌曲列表";
         }
     }
 
-    function filterBySinger(singer) {
-        // body... 
-    }
+    // 音乐播放器
+    let player = document.getElementById("musicplayer");
+
+    // 设置初始音量
+    player.volume = 0.5;
+
+    // 播放完的监听事件
+    player.addEventListener("ended", function() {
+        randomPlay();
+    })
 
     // 随机播放
     function randomPlay() {
-        debugger;
-        let size = musics.length;
+        let size = songs.length;
         let index = Math.floor(Math.random() * size);
         while (index > size) {
             index = Math.floor(Math.random() * size);
         }
-        console.log(index)
-        let player = document.getElementById("musicplayer");
-<!--        player.src = urlPrefix+musics[index]['url'];-->
-        player.src = "https://github.com/191059014/music/blob/main/song/其他/何小清 - 原谅我一次 (Live片段).mp3"
-        player.play();
+        play(index);
     }
 
+    // 根据序号播放
+    function play(index) {
+        song = songs[index]
+        player.src = urlPrefix + song['url'];
+        player.play();
+        setCurrentMusicName(song['name']);
+        setCurrentPlayMusicHighlight(index);
+    }
 
+    // 设置当前播放歌曲高亮
+    function setCurrentPlayMusicHighlight(index) {
+        // 将其他歌曲背景色取消
+        liElements = document.getElementsByTagName("li")
+        for (let index in liElements) {
+            liElements[index].className = "inactiveMusic";
+        }
+        // 将当前歌曲背景色高亮
+        currentPlayMusicLiElement = document.getElementById("music_" + index);
+        currentPlayMusicLiElement.className = 'activeMusic';
+    }
 
-    // 初始化歌手列表
-    let singerDiv = document.getElementById("singerDiv");
-    for (let singer in songConfig) {
-        let singerLink = document.createElement('a');
-        singerLink.href = "javascript:void(0)";
-        singerLink.innerText = singer;
-        singerLink.style.marginRight = '10px';
-        // singerLink.onclick = 
-        singerDiv.appendChild(singerLink);
-        musics.push(...songConfig[singer]);
+    // 设置当前播放歌曲名称
+    function setCurrentMusicName(currentMusicName) {
+        document.getElementById("currentMusicName").innerText = currentMusicName;
     }
     </script>
 </body>
