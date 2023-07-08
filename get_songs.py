@@ -11,10 +11,12 @@ def get_from_github(github_url):
     :param github_url: github网址
     :return: 歌曲配置列表
     """
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'}
     content = None
     for i in range(3):
         try:
-            response = requests.get(github_url, timeout=10)
+            response = requests.get(github_url, headers=headers, timeout=10)
             content = response.content.decode("utf-8")
             break
         except Exception as e:
@@ -68,7 +70,7 @@ def get_from_local_disk(basedir):
 
 
 if __name__ == '__main__':
-    songs = get_from_local_disk("D:\\Program Files\\KuGou")
+    songs = get_from_local_disk("D:\\upload_music")
     print("从本地硬盘加载：", songs)
 
     # github网页上歌曲文件夹打开后的地址
